@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Processos</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ctext y='9' font-size='9'%3E%E2%9A%96%3C/text%3E%3C/svg%3E">
 <style>
   :root {
     --bg: #F2F2F7; --card: #FFFFFF; --texto: #000000; --secundario: #8E8E93;
@@ -40,6 +42,7 @@
     color: var(--texto); font-size: 14px; cursor: pointer; white-space: nowrap;
   }
   .chip.ativo { background: var(--azul); color: #fff; }
+  .alerta { background: var(--vermelho); color: #fff; border-radius: 10px; padding: 10px 14px; margin-top: 12px; font-size: 14px; font-weight: 600; }
   main { padding: 8px 16px 120px; max-width: 720px; margin: 0 auto; }
   .secao { font-size: 13px; color: var(--secundario); text-transform: uppercase; margin: 20px 4px 6px; }
   .lista { background: var(--card); border-radius: 12px; overflow: hidden; }
@@ -90,6 +93,7 @@
   .login h1 { text-align: center; }
   .login .card { background: var(--card); border-radius: 14px; padding: 18px; }
   .erro { color: var(--vermelho); font-size: 14px; margin-top: 10px; min-height: 18px; }
+  .aviso { color: var(--laranja); font-size: 14px; margin-top: 10px; min-height: 18px; }
   .status { font-size: 13px; color: var(--secundario); margin-top: 8px; min-height: 18px; }
 </style>
 </head>
@@ -107,6 +111,7 @@
       <button class="btn" id="l-entrar">Entrar</button>
     </div>
     <div class="erro" id="l-erro"></div>
+    <div class="aviso" id="l-aviso"></div>
   </div>
 </section>
 
@@ -117,8 +122,9 @@
       <h1>Processos</h1>
       <button class="sair" id="sair">Sair</button>
     </div>
-    <input class="busca" id="busca" placeholder="Buscar por cliente ou número">
+    <input class="busca" id="busca" placeholder="Buscar por cliente, número, tipo ou vara">
     <div class="filtros" id="filtros"></div>
+    <div class="alerta" id="alerta" hidden></div>
   </header>
 
   <main>
