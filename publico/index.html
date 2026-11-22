@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Processos</title>
+<style>
+  :root {
+    --bg: #F2F2F7; --card: #FFFFFF; --texto: #000000; --secundario: #8E8E93;
+    --azul: #007AFF; --verde: #34C759; --laranja: #FF9500; --vermelho: #FF3B30;
+    --separador: #C6C6C8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #000000; --card: #1C1C1E; --texto: #FFFFFF; --secundario: #8E8E93; --separador: #38383A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #000000; --card: #1C1C1E; --texto: #FFFFFF; --secundario: #8E8E93; --separador: #38383A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--texto);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    font-size: 16px; line-height: 1.4;
+  }
+  [hidden] { display: none !important; }
+  header { padding: 20px 16px 8px; position: sticky; top: 0; background: var(--bg); z-index: 2; }
+  .topo { display: flex; justify-content: space-between; align-items: center; }
+  h1 { font-size: 34px; font-weight: 700; margin: 0 0 12px; }
+  .sair { background: none; border: none; color: var(--azul); font-size: 16px; cursor: pointer; }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--separador); border-radius: 10px;
+    background: var(--bg); color: var(--texto); font-size: 16px; font-family: inherit;
+  }
+  .busca { border: none; background: var(--card); }
+  .filtros { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; }
+  .chip {
+    border: none; border-radius: 999px; padding: 8px 14px; background: var(--card);
+    color: var(--texto); font-size: 14px; cursor: pointer; white-space: nowrap;
+  }
+  .chip.ativo { background: var(--azul); color: #fff; }
+  main { padding: 8px 16px 120px; max-width: 720px; margin: 0 auto; }
+  .secao { font-size: 13px; color: var(--secundario); text-transform: uppercase; margin: 20px 4px 6px; }
+  .lista { background: var(--card); border-radius: 12px; overflow: hidden; }
+  .item {
+    padding: 14px 16px; border-bottom: 1px solid var(--separador); cursor: pointer;
+    display: flex; justify-content: space-between; gap: 12px; align-items: center;
+  }
+  .item:last-child { border-bottom: none; }
+  .item small { color: var(--secundario); display: block; }
+  .badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; color: #fff; }
+  .b-andamento { background: var(--azul); }
+  .b-aguardando { background: var(--laranja); }
+  .b-concluido { background: var(--verde); }
+  .prazo-alto { color: var(--vermelho) !important; font-weight: 600; }
+  .vazio { padding: 24px; text-align: center; color: var(--secundario); }
+  .fab {
+    position: fixed; right: 20px; bottom: 24px; width: 56px; height: 56px; border-radius: 28px;
+    border: none; background: var(--azul); color: #fff; font-size: 30px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: flex-end; justify-content: center; z-index: 10; }
+  .folha {
+    background: var(--card); width: 100%; max-width: 720px; border-radius: 16px 16px 0 0;
+    padding: 20px 16px 28px; max-height: 92vh; overflow-y: auto;
+  }
+  .folha h2 { margin: 0 0 12px; font-size: 22px; }
+  label { display: block; font-size: 13px; color: var(--secundario); margin: 12px 0 4px; }
+  textarea { min-height: 70px; resize: vertical; }
+  .botoes { display: flex; gap: 10px; margin-top: 18px; }
+  .btn {
+    flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;
+    background: var(--azul); color: #fff;
+  }
+  .btn.sec { background: var(--bg); color: var(--azul); }
+  .btn.perigo { background: var(--vermelho); }
+  .btn:disabled { opacity: .5; }
+  .andamentos { margin: 10px 0 0; padding-left: 18px; font-size: 14px; color: var(--secundario); }
+  .andamentos li { margin-bottom: 4px; }
+  .linha { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  .fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; margin-top: 8px; }
+  .foto { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 1; background: var(--bg); }
+  .foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .foto button {
+    position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 12px; border: none;
+    background: rgba(0,0,0,.6); color: #fff; cursor: pointer; font-size: 14px;
+  }
+  .login { max-width: 380px; margin: 14vh auto 0; padding: 0 16px; }
+  .login h1 { text-align: center; }
+  .login .card { background: var(--card); border-radius: 14px; padding: 18px; }
+  .erro { color: var(--vermelho); font-size: 14px; margin-top: 10px; min-height: 18px; }
+  .status { font-size: 13px; color: var(--secundario); margin-top: 8px; min-height: 18px; }
+</style>
+</head>
+<body>
+
+<!-- Tela de login -->
+<section class="login" id="tela-login" hidden>
+  <h1>Processos</h1>
+  <div class="card">
+    <label>E-mail</label>
+    <input id="l-email" type="email" autocomplete="username">
+    <label>Senha</label>
+    <input id="l-senha" type="password" autocomplete="current-password">
+    <div class="botoes">
+      <button class="btn" id="l-entrar">Entrar</button>
+    </div>
+    <div class="erro" id="l-erro"></div>
+  </div>
+</section>
+
+<!-- Tela principal -->
+<div id="tela-app" hidden>
+  <header>
+    <div class="topo">
+      <h1>Processos</h1>
+      <button class="sair" id="sair">Sair</button>
+    </div>
+    <input class="busca" id="busca" placeholder="Buscar por cliente ou número">
+    <div class="filtros" id="filtros"></div>
+  </header>
+
+  <main>
+    <div class="secao">Próximas ações</div>
+    <div class="lista" id="proximas"></div>
+
+    <div class="secao">Todos os processos</div>
+    <div class="lista" id="lista"></div>
+  </main>
+
+  <button class="fab" id="novo" aria-label="Novo processo">+</button>
+</div>
+
+<!-- Modal de cadastro/edição -->
+<div class="modal" id="modal" hidden>
+  <div class="folha">
+    <h2 id="modal-titulo">Novo processo</h2>
+
+    <label>Número do processo</label>
+    <input id="f-numero" placeholder="0000000-00.0000.0.00.0000">
+    <label>Cliente</label>
+    <input id="f-cliente">
+    <label>Tipo de ação</label>
+    <input id="f-tipo" placeholder="Ex.: Trabalhista, Cível">
+    <label>Vara / juízo</label>
+    <input id="f-vara">
+    <label>Situação</label>
+    <select id="f-situacao">
+      <option value="andamento">Em andamento</option>
+      <option value="aguardando">Aguardando</option>
+      <option value="concluido">Concluído</option>
+    </select>
+    <label>Próxima ação</label>
+    <input id="f-acao" placeholder="Ex.: Protocolar contestação">
+    <label>Prazo da próxima ação</label>
+    <input id="f-prazo" type="date">
+    <label>Observações</label>
+    <textarea id="f-obs"></textarea>
+
+    <div class="secao" style="margin:18px 4px 0">Andamentos</div>
+    <ul class="andamentos" id="andamentos"></ul>
+    <div class="linha">
+      <input id="f-andamento" placeholder="Registrar andamento">
+      <button class="btn sec" id="btn-andamento" style="flex:0 0 auto">Adicionar</button>
+    </div>
+
+    <div class="secao" style="margin:18px 4px 0">Fotos e documentos</div>
+    <input id="f-fotos" type="file" accept="image/*" multiple>
+    <div class="fotos" id="fotos"></div>
+    <div class="status" id="status"></div>
+
+    <div class="botoes">
+      <button class="btn sec" id="cancelar">Cancelar</button>
+      <button class="btn perigo" id="excluir" hidden>Excluir</button>
+      <button class="btn" id="salvar">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
